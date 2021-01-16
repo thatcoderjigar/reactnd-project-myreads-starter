@@ -16,6 +16,10 @@ class BookshelfManager extends React.Component {
 
     constructor(props) {
         super(props);
+        this.updateBookLists();
+    }
+
+    updateBookLists() {
         BooksAPI.getAll().then(data => {
             this.setState({ allBooksList: data }, () => {
                 let readBooks = this.state.allBooksList.filter(book => book.shelf === 'read');
@@ -30,17 +34,6 @@ class BookshelfManager extends React.Component {
                 });
             });
         });
-    }
-
-    updateBookLists() {
-        let readBooks = this.state.allBooksList.filter(book => book.shelf === "read");
-        this.setState({readList: readBooks});
-        
-        let currentlyReading = this.state.allBooksList.filter(book => book.shelf === "currentlyReading");
-        this.setState({currentlyReadingList: currentlyReading});
-
-        let wantToRead = this.state.allBooksList.filter(book => book.shelf === "wantToRead");
-        this.setState({wantToReadList: wantToRead});
     }
 
     updateBooksShelf() {
