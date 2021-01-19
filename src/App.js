@@ -25,18 +25,11 @@ class BooksApp extends React.Component {
   onBookUpdate(e, id) {
     let newShelfValue = e.target.value;
     BooksAPI.update(id, newShelfValue).then(data => {
-      let bookList = this.state.bookList;
-
-      if(bookList.filter(item => item.id === id).length > 0) {
-        bookList.forEach(book => {
-          if (book.id === id) {
-            book.shelf = newShelfValue;
-          }
-        })
+      let bookList = Object.assign(this.state.bookList);
+      if (bookList.filter(item => item.id === id).length > 0) {
+        bookList.filter(book => book.id === id).map(book => book.shelf = newShelfValue);
       } else {
-        BooksAPI.get(id).then(data => {
-          bookList.push(data);
-        })
+        BooksAPI.get(id).then(data => bookList.push(data));
       }
       this.setState({ bookList: bookList });
     })
@@ -59,11 +52,11 @@ class BooksApp extends React.Component {
               <button className='open-search'>Add a book</button>
             </Link>
           </div>
-        )}/>
+        )} />
 
         <Route exact path="/search" render={() => (
           <Booksearch bookList={this.state.bookList} onBookUpdate={(e) => this.onBookUpdate} />
-        )}/>
+        )} />
       </div>
     )
   }

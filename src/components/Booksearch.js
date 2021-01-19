@@ -7,22 +7,37 @@ class Booksearch extends React.Component {
 
   state = {
     searchResults: [],
-
+    searchText: '',
+    isHidden: false,
+    noSearchResults: false
   }
 
   handleNewSearch(e) {
+    
+    if(this.state.searchResults !== []) {
+      this.setState({searchResults: []});
+      this.setState({isHidden: false});
+      this.setState({noSearchResults: false});
+    }
+
     let searchText = e.target.value;
     if (searchText.length > 3) {
+      this.setState({ searchText: searchText });
       this.searchBooks(searchText);
+      this.setState({isHidden: true});
+    } else {
+      this.setState({isHidden: false});
     }
+
   }
 
   searchBooks(searchText) {
     BooksAPI.search(searchText).then(data => {
-
       if (data.error) {
+        this.setState({noSearchResults: true})
         console.log("error..")
       } else {
+        this.setState({noSearchResults: false})
         let currentBookList = this.props.bookList;
         let bookMap = new Map();
 
@@ -58,7 +73,11 @@ class Booksearch extends React.Component {
           </div>
         </div>
         <div className="search-books-results">
-          <Bookshelf bookList={this.state.searchResults} shelfName={"Search Result(s) :"} onBookUpdate={(e) => this.props.onBookUpdate()} />
+          <div hidden={this.state.isHidden}>
+            <h4>Please enter more than three characters to begin..</h4>
+          </div>
+          {!this.state.noSearchResults && <Bookshelf bookList={this.state.searchResults} shelfName={"Search Result(s) :"} onBookUpdate={(e) => this.props.onBookUpdate()} />}
+          {this.state.noSearchResults && <h4>No Valid Results found for the search query</h4>}
         </div>
       </div>
     );
